@@ -1,0 +1,28 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>W32Carnage</Name>
+    <Description>&lt;No description available&gt;</Description>
+    <ProjectType>VC</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>W32Carnage</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="ConsoleApplication1.vcxproj" File="ConsoleApplication1.vcxproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.vcxproj.filters">ConsoleApplication1.vcxproj.filters</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="W32Carnage.cpp">W32Carnage.cpp</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="stdafx.cpp">stdafx.cpp</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="syscall.h">syscall.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="syscall.asm">syscall.asm</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="stdafx.h">stdafx.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="targetver.h">targetver.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="ReadMe.txt">ReadMe.txt</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>
