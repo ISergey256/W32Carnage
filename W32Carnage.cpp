@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "syscall.h"
 #include "windows.h"
 #include "BaseTsd.h"
 #include <strsafe.h>
@@ -7,37 +6,33 @@
 #include <stdio.h>
 #include <time.h>
 
-#define MAX_THREADS 8
-#define MAX_SYSCALLS 0x1FFF
-#define W32K_FUZZING 1
-#define STATUS_INVALID_SYSTEM_SERVICE 0x00000000C000001C
-#define PRINT_FUZZ 0
-#define BUFFER_SIZE 1024*8
-#define EXTRA_ARGS 16
-#define NUM_THREADS 4
+#include "syscalls.h"
+#include "Proc.h"
+#include "Rnd.h"
+
+#define MAX_THREADS 16
+#define NUM_THREADS 1
 
 extern "C" {
 	UINT64 syscallNumber;
 	UINT64 syscallArgv[8];
 	UINT64 syscallRet;
 	UINT8 fakeStack[1024 * 1024];
+	void  asmSyscall(void);
 }
 
-UINT8 threadHB[MAX_THREADS];
-UINT8 allowedSyscall[MAX_SYSCALLS];
-UINT64 lastSyscall[MAX_THREADS];
-UINT64 argBuffers[EXTRA_ARGS][BUFFER_SIZE];
-UINT64 tick[MAX_THREADS]; //Lock needed, but don't care...
+struct syscall_t *curSyscall[MAX_THREADS];
+UINT32 threadHB[MAX_THREADS];
 
 UINT64 _syscall(UINT64 number,
-					UINT64 arg0,
-					UINT64 arg1,
-					UINT64 arg2,
-					UINT64 arg3,
-					UINT64 arg4,
-					UINT64 arg5,
-					UINT64 arg6,
-					UINT64 arg7) {
+	UINT64 arg0,
+	UINT64 arg1,
+	UINT64 arg2,
+	UINT64 arg3,
+	UINT64 arg4,
+	UINT64 arg5,
+	UINT64 arg6,
+	UINT64 arg7) {
 	syscallNumber = number;
 	syscallArgv[0] = arg0;
 	syscallArgv[1] = arg1;
@@ -56,87 +51,188 @@ UINT64 _syscall(UINT64 number,
 	return (syscallRet & 0xFFFFFFFF);
 }
 
-inline UINT8 fastRand8() {
-	return __rdtsc() & 0xFF;
-}
-
-UINT64 rand64() {
-	UINT64 tmpRand = 0;
-	int i;
-	for (i = 0; i < 8; i++) {
-		tmpRand = tmpRand | fastRand8();
-		if (i != 7) {
-			tmpRand = tmpRand << 8;
-		}
+UINT64 getArg(struct syscall_t *curSyscall, int argIndex){
+	if (curSyscall->argopt[argIndex] == __OPT){ //TODO: RAND
+		//printf("Optional !\n");
+		return 0; //NULL
 	}
-	return tmpRand;
-}
 
-UINT64 getRandomArg(INT8 fillBuffer){
-	UINT8 bufferNo = 0;
-	UINT8 state = (fastRand8() & 0xF);
-	switch (state)
+	switch (curSyscall->argtype[argIndex])
 	{
-	case 0:
-		return 0;
-	case 1:
-		return fastRand8();
-	case 2:
-		return (fastRand8() << 8) | fastRand8();
-	case 13:
-		return (rand64() | 0xFFFF000000000000);
-	case 14:
-		bufferNo = fastRand8();
-		if (fillBuffer > 1){
-			int i;
-			for (i = 0; i < BUFFER_SIZE / 8; i++){
-				argBuffers[bufferNo][i] = getRandomArg(0);
-			}
-		}
-		return (UINT64)argBuffers[bufferNo];
-	case 15:
-		return 0xFFFFFFFFFFFFFFFF;
+	case __HWND :
+		return get__HWND();
+	case __DWORD :
+	case __COLORREF:
+	case __WCHAR:
+		return get__DWORD();
+	case __LPMSG:
+		return get__LPMSG();
+	case __WPARAM:
+		return get__WPARAM();
+	case __LPARAM:
+		return get__LPARAM();
+	case __BOOL:
+		return get__BOOL();
+	case __DWORD_PTR:
+		return get__DWORD_PTR();
+	case __LPDEVMODEW:
+		return get__LPDEVMODEW();
+	case __RECT:
+	case __LPRECT:
+	case __LPCRECT:
+		return get__RECT();
+	case __HDESK:
+		return get__HDESK();
+	case __HACCEL:
+		return get__HACCEL();
+	case __ACCESS_MASK:
+		return get__ACCESS_MASK();
+	case __HMENU :
+		return get__HMENU();
+	case __HINSTANCE:
+	case __HMODULE:
+		return get__HINSTANCE();
+	case __HDWP:
+		return get__HDWP();
+	case __PPAINTSTRUCT:
+		return get__PPAINTSTRUCT();
+	case __WINDOWPLACEMENT:
+		return get__WINDOWPLACEMENT();
+	case __BLENDFUNCTION:
+		return get__BLENDFUNCTION();
+	case __PFLASHWINFO:
+		return get__PFLASHWINFO();
+	case __HICON:
+		return get__HICON();
+	case __HFONT:
+		return get__HFONT();
+	case __HCURSOR:
+		return get__HCURSOR();
+	case __PCURSORINFO:
+		return get__PCURSORINFO();
+	case __PICONINFO:
+		return get__PICONINFO();
+	case __PTITLEBARINFO:
+		return get__PTITLEBARINFO();
+	case __PALTTABINFO:
+		return get__PALTTABINFO();
+	case __HPALETTE:
+		return get__HPALETTE();
+	case __INT:
+	case __UINT:
+	case __ULONG:
+	case __LONG:
+		return get__INT();
+	case __PUNICODE_STRING:
+		return get__PUNICODE_STRING();
+	case __PVOID:
+	case __LPVOID:
+		return get__PVOID();
+	case __HBITMAP:
+		return get__HBITMAP();
+	case __HANDLE:
+		return get__HANDLE();
+	case __POBJECT_ATTRIBUTES:
+		return get__POBJECT_ATTRIBUTES();
+	case __HDC:
+		return get__HDC();
+	case __HRAWINPUT:
+		return get__HRAWINPUT();
+	case __WORD:
+		return fastrand16();
+	case __PUINT:
+	case __PDWORD:
+	case __LPDWORD:
+	case __UINT_PTR:
+		return get__PUINT();
+	case __PRAWINPUT:
+		return get__PRAWINPUT();
+	case __LPPOINT:
+	case __POINT:
+		return get__PPOINT();
+	case __HRGN:
+		return get__HRGN();
+	case __LPSCROLLINFO:
+	case __LPCSCROLLINFO:
+		return get__SCROLLINFO();
+	case __PWNDCLASSEXW:
+		return get__WNDCLASSEXW();
+	case __PSCROLLBARINFO:
+		return get__SCROLLBARINFO();
+	case __LPWSTR:
+		return get__PWSTR();
+	case __PRAWINPUTDEVICE:
+		return get__RAWINPUTDEVICE();
+	case __BYTE:
+		return fastrand8();
+	case __PBYTE:
+	case __LPBYTE:
+		return get__PBYTE();
+	case __HKL:
+		return get__HKL();
+	case __LPMOUSEMOVEPOINT:
+		return  get__MOUSEMOVEPOINT();
+	case __LPINPUT:
+		return get__INPUT();
+	case __LPTRACKMOUSEEVENT:
+		return get__TRACKMOUSEEVENT();
+
+
+	case __UNKNOWN:
+	case __TIMERPROC:
+	case __PCURSORDATA:
+	case __USERTHREADINFOCLASS:
+	case __PSBDATA:
+	case __HOOKPROC:
+	case __HHOOK:
+	case __WINEVENTPROC:
+	case __PPFNCLIENT:
+	case __PPFNCLIENTWORKER:
+		return get__UNKNOWN();
 	default:
-		return rand64();
+		//printf("[DEBUG] Unknow type %d \n", curSyscall->argtype[argIndex]);
+		return get__UNKNOWN(); //TODO
 	}
 	return 0;
+}
+
+void fuzz(struct syscall_t *curSyscall){
+	//printf("%s\n", curSyscall->name);
+	UINT64 ret = 0xDEADBEEFDEADBEEF;
+
+	UINT64 args[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+	try{
+		for (int i = 0; i < curSyscall->argn; i++){
+			args[i] = getArg(curSyscall, i);
+		}
+		ret = _syscall(curSyscall->syscallnumber,
+			args[0],
+			args[1],
+			args[2],
+			args[3],
+			args[4],
+			args[5],
+			args[6],
+			args[7]);
+	}
+	catch (...){
+		printf("...\n");
+		return ;
+	}
+	//printf("ret %p\n", ret);
 }
 
 DWORD WINAPI fuzzThread(LPVOID lpParam) {
 	UINT32 threadId = *((UINT32*)lpParam);
 	printf("Go ! Fuzzer %d\n", threadId);
 	try{
-		threadHB[threadId] = 1;
-		UINT32 fuzzNumber = 1000000;
-		UINT32 fuzzTries = 0;
-		while (fuzzTries < fuzzNumber) {
-			UINT64 rndSyscallNumber = (__rdtsc() & 0xFFF);
-			if (W32K_FUZZING) {
-				rndSyscallNumber = rndSyscallNumber + 0x1000;
-			}
-			if (allowedSyscall[rndSyscallNumber] == 1) {
-				lastSyscall[threadId] = rndSyscallNumber;
-				UINT64 arg0 = getRandomArg(1);
-				UINT64 arg1 = getRandomArg(1);
-				UINT64 arg2 = getRandomArg(1);
-				UINT64 arg3 = getRandomArg(1);
-				UINT64 arg4 = getRandomArg(1);
-				UINT64 arg5 = getRandomArg(1);
-				UINT64 arg6 = getRandomArg(1);
-				UINT64 arg7 = getRandomArg(1);
-				if (PRINT_FUZZ){
-					printf("@%d %08x(%p, %p, %p, %p)...", fuzzTries, rndSyscallNumber, arg0, arg1, arg2, arg3);
-				}
-				UINT64 ret = _syscall(rndSyscallNumber, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-				tick[threadId]++;
-				if (ret == STATUS_INVALID_SYSTEM_SERVICE) {
-					//allowedSyscall[rndSyscallNumber] = 0;
-				}
-				if (PRINT_FUZZ){
-					printf("%p\n", ret);
-				}
-				fuzzTries++;
-				threadHB[threadId] = 1;
+		while (1){
+			int i = fastrand16() & 0xFFF; //TODO: do it better ! faster ! stronger !
+			if (syscall_list[i].enabled == 1){
+				threadHB[threadId]++;
+				curSyscall[threadId] = &syscall_list[i];
+				fuzz(curSyscall[threadId]);
 			}
 		}
 	}
@@ -146,56 +242,72 @@ DWORD WINAPI fuzzThread(LPVOID lpParam) {
 	return 0;
 }
 
+
+
 int main(int argc, _TCHAR* argv[])
 {
+	fast_srand();
 	LoadLibraryW(L"user32.dll");
 	LoadLibraryW(L"gdi32.dll");
 
-	UINT32 zero = 0;
-
-	UINT32 i;
-	for (i = 0; i < MAX_THREADS; i++) {
-		threadHB[i] = 0;
-		tick[i] = 0;
-	}
-	for (i = 0; i < MAX_SYSCALLS; i++) {
-		allowedSyscall[i] = 1;
-	}
+	//TODO: tests !
+	/*printf("%p\n", get__HWND());
+	//get__LPMSG();
+	get__HDESK();
+	get__HACCEL();
+	get__HMENU();
+	get__HDWP();
+	get__HICON();
+	get__HFONT();
+	get__HCURSOR();
+	getchar();*/
 
 	HANDLE threadHandles[8];
-	UINT32 threadNumber = 0;
+	UINT32 threadNumber;
 	UINT32 threadArg[MAX_THREADS];
 	printf("Starting Fuzzing threads...\n");
-	for (i = 0; i < NUM_THREADS; i++){
+	for (threadNumber = 0; threadNumber < NUM_THREADS; threadNumber++){
 		printf("Starting thread %d\n", threadNumber);
 		threadArg[threadNumber] = threadNumber;
 		threadHandles[threadNumber] = CreateThread(NULL, 0, fuzzThread, &threadArg[threadNumber], 0, NULL);
-		printf("%p\n", threadHandles[threadNumber]);
-		threadNumber++;
 	}
+
+	Sleep(1000);
 
 	printf("Starting watchdog...\n");
 	while (1) {
 		UINT64 totalTicks = 0;
-		for (i = 0; i < threadNumber; i++) {
+		for (UINT32 i = 0; i < threadNumber; i++) {
 			if (threadHB[i] == 0) {
 				//Terminate the thread
 				TerminateThread(threadHandles[i], 0);
 				//Black-list this syscall
-				allowedSyscall[lastSyscall[i]] = 0;
-				printf("%08x blacklisted with restart of %d !\n", lastSyscall[i], i);
+				curSyscall[i]->enabled = 0;
+				printf("%s blacklisted with restart of %d !\n", curSyscall[i]->name, i);
 				//Re-create the thread
 				threadHandles[i] = CreateThread(NULL, 0, fuzzThread, &threadArg[i], 0, NULL);
 				threadHB[i] = 1;
 			}else{
+				totalTicks += threadHB[i];
 				threadHB[i] = 0;
 			}
-			totalTicks += tick[i];
-			tick[i] = 0;
 		}
 		Sleep(1000);
 		printf("~%d syscalls/s\n", totalTicks);
 	}
 	return 0;
+
+	return 0;
 }
 
+
+
+
+INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow)
+{
+	//OutputDebugStringW(L"[DEBUG] Go Fuzz !%s\n", "toto");
+
+	main(0, NULL);
+
+	return 0;
+}

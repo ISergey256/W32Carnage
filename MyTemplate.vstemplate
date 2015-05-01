@@ -16,9 +16,12 @@
   <TemplateContent>
     <Project TargetFileName="ConsoleApplication1.vcxproj" File="ConsoleApplication1.vcxproj" ReplaceParameters="true">
       <ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.vcxproj.filters">ConsoleApplication1.vcxproj.filters</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="Proc.cpp">Proc.cpp</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="W32Carnage.cpp">W32Carnage.cpp</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="stdafx.cpp">stdafx.cpp</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="syscall.h">syscall.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="Proc.h">Proc.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="Rnd.h">Rnd.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="syscalls.h">syscalls.h</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="syscall.asm">syscall.asm</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="stdafx.h">stdafx.h</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="targetver.h">targetver.h</ProjectItem>
