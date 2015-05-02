@@ -7,7 +7,7 @@
 static unsigned int g_seed;
 
 inline void fast_srand(){
-	g_seed = __rdtsc();
+	g_seed = (unsigned int)__rdtsc();
 }
 
 inline int fastrand(){

@@ -23,6 +23,7 @@ extern "C" {
 
 struct syscall_t *curSyscall[MAX_THREADS];
 UINT32 threadHB[MAX_THREADS];
+UINT32 missingtypes[4096];
 
 UINT64 _syscall(UINT64 number,
 	UINT64 arg0,
@@ -149,6 +150,7 @@ UINT64 getArg(struct syscall_t *curSyscall, int argIndex){
 		return get__PRAWINPUT();
 	case __LPPOINT:
 	case __POINT:
+	case __PPOINTL:
 		return get__PPOINT();
 	case __HRGN:
 		return get__HRGN();
@@ -176,6 +178,17 @@ UINT64 getArg(struct syscall_t *curSyscall, int argIndex){
 		return get__INPUT();
 	case __LPTRACKMOUSEEVENT:
 		return get__TRACKMOUSEEVENT();
+	case __PULONG:
+	case __ULONG_PTR:
+		return get__PLONG();
+	case __PFONTOBJ:
+		return get__FONTOBJ();
+	case __HBRUSH:
+		return get__HBRUSH();
+	case __PSTROBJ:
+		return get__STROBJ();
+	case __PCLIPOBJ:
+		return get__CLIPOBJ();
 
 
 	case __UNKNOWN:
@@ -191,6 +204,7 @@ UINT64 getArg(struct syscall_t *curSyscall, int argIndex){
 		return get__UNKNOWN();
 	default:
 		//printf("[DEBUG] Unknow type %d \n", curSyscall->argtype[argIndex]);
+		missingtypes[curSyscall->argtype[argIndex]]++;
 		return get__UNKNOWN(); //TODO
 	}
 	return 0;
@@ -250,6 +264,10 @@ int main(int argc, _TCHAR* argv[])
 	LoadLibraryW(L"user32.dll");
 	LoadLibraryW(L"gdi32.dll");
 
+	for (int i = 0; i < 4096; i++){
+		missingtypes[i] = 0;
+	}
+
 	//TODO: tests !
 	/*printf("%p\n", get__HWND());
 	//get__LPMSG();
@@ -272,8 +290,19 @@ int main(int argc, _TCHAR* argv[])
 		threadHandles[threadNumber] = CreateThread(NULL, 0, fuzzThread, &threadArg[threadNumber], 0, NULL);
 	}
 
-	Sleep(1000);
+	/*Sleep(10000);
+	UINT32 maxType = 0;
+	UINT32 maxCount = 0;
+	for (int i = 0; i < 4096; i++){
+		if (missingtypes[i] > maxCount){
+			maxCount = missingtypes[i];
+			maxType = i;
+		}
+	}
+	printf("type:%d count: %d", maxType, maxCount);
+	getchar();*/
 
+	Sleep(1000);
 	printf("Starting watchdog...\n");
 	while (1) {
 		UINT64 totalTicks = 0;

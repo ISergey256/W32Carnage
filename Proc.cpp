@@ -244,16 +244,16 @@ UINT64 get__HICON(){
 	return (UINT64)cur__HICON;
 }
 
-HFONT cur__HFONT;
+HFONT cur__HFONT = NULL;
 UINT64 get__HFONT(){
-	cur__HFONT = CreateFont(46, 28, 215, 0,
-		FW_NORMAL, FALSE, FALSE, FALSE,
-		ANSI_CHARSET, OUT_DEFAULT_PRECIS,
-		CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-		DEFAULT_PITCH | FF_ROMAN,
-		L"Times New Roman");
+
 	if (cur__HFONT == NULL){
-		printf("get__HFONT error !\n");
+		cur__HFONT = CreateFont(46, 28, 215, 0,
+			FW_NORMAL, FALSE, FALSE, FALSE,
+			ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+			CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+			DEFAULT_PITCH | FF_ROMAN,
+			L"Times New Roman");
 	}
 	return (UINT64)&cur__HFONT;
 }
@@ -444,8 +444,8 @@ UINT64 get__PRAWINPUT(){
 
 POINT cur__POINT;
 UINT64 get__PPOINT(){
-	cur__POINT.x = fastrand64();
-	cur__POINT.y = fastrand64();
+	cur__POINT.x = fastrand32();
+	cur__POINT.y = fastrand32();
 	return (UINT64)&cur__POINT;
 }
 
@@ -504,7 +504,7 @@ UINT64 get__MOUSEMOVEPOINT(){
 	cur__MOUSEMOVEPOINT.x = fastrand32();
 	cur__MOUSEMOVEPOINT.y = fastrand32();
 	cur__MOUSEMOVEPOINT.time = fastrand32();
-	tmpULONG = fastrand64();
+	tmpULONG = fastrand32();
 	cur__MOUSEMOVEPOINT.dwExtraInfo = (ULONG_PTR)&tmpULONG;
 	return (UINT64)&cur__MOUSEMOVEPOINT;
 }
@@ -523,4 +523,69 @@ UINT64 get__TRACKMOUSEEVENT(){
 	fastrandbuffer((UINT8*)&cur__TRACKMOUSEEVENT, sizeof(TRACKMOUSEEVENT));
 	cur__TRACKMOUSEEVENT.hwndTrack = cur__HWND;
 	return (UINT64)&cur__TRACKMOUSEEVENT;
+}
+LONG cur__LONG;
+UINT64 get__PLONG(){
+	cur__LONG = fastrand32();
+	return (UINT64)&cur__LONG;
+}
+
+typedef struct _FONTOBJ {
+	ULONG iUniq;
+	ULONG iFace;
+	ULONG cxMax;
+	FLONG flFontType;
+	ULONG_PTR iTTUniq;
+	ULONG_PTR iFile;
+	SIZE sizLogResPpi;
+	ULONG ulStyleSize;
+	PVOID pvConsumer;
+	PVOID pvProducer;
+} FONTOBJ;
+FONTOBJ cur__FONTOBJ;
+UINT64 get__FONTOBJ(){
+	return (UINT64)&cur__FONTOBJ;
+}
+
+//TODO: !
+COLORREF cur__COLORREF;
+
+
+HBRUSH cur__HBRUSH;
+UINT64 get__HBRUSH(){
+	cur__HBRUSH = CreateSolidBrush(cur__COLORREF);
+	return (UINT64)&cur__HBRUSH;
+}
+
+
+typedef struct _GLYPHPOS {
+	VOID* hg;//HGLYPH   hg;
+	VOID *pgdf;
+	POINTL   ptl;
+} GLYPHPOS, *PGLYPHPOS;
+typedef struct _STROBJ {
+	ULONG cGlyphs;
+	FLONG flAccel;
+	ULONG ulCharInc;
+	RECTL rclBkGround;
+	GLYPHPOS *pgp;
+	LPWSTR pwszOrg;
+} STROBJ;
+STROBJ cur__STROBJ;
+UINT64 get__STROBJ(){
+	return (UINT64)&cur__STROBJ;
+}
+
+typedef struct _CLIPOBJ {
+	ULONG iUniq;
+	RECTL rclBounds;
+	BYTE  iDComplexity;
+	BYTE  iFComplexity;
+	BYTE  iMode;
+	BYTE  fjOptions;
+} CLIPOBJ;
+CLIPOBJ cur__CLIPOBJ;
+UINT64 get__CLIPOBJ(){
+	//TODO !
+	return (UINT64)&cur__CLIPOBJ;
 }

@@ -121,7 +121,6 @@ enum argtype{
 	__PFINDEXISTINGCURICONPARAM,
 	__USERTHREADINFOCLASS,
 	__LPCSCROLLINFO,
-	__FLONG,
 	__TIMERPROC,
 	__HHOOK,
 	__HOOKPROC,
@@ -2859,7 +2858,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __UNKNOWN, __IN, __IN, __UNKNOWN },
 		{ __REQ, __REQ, __REQ, __REQ },
-		{ __INT, __INT, __COLORREF, __FLONG },
+		{ __INT, __INT, __COLORREF, __ULONG },
 	},
 	{
 		L"user32.dll",
@@ -3675,7 +3674,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __OUT, __OUT, __OUT, __OUT, __OUT },
 		{ __REQ, __REQ, __OPT, __REQ, __REQ, __REQ },
-		{ __HDC, __PUNIVERSAL_FONT_ID, __DESIGNVECTOR, __PULONG, __PULONG, __FLONG },
+		{ __HDC, __PUNIVERSAL_FONT_ID, __DESIGNVECTOR, __PULONG, __PULONG, __ULONG },
 	},
 	{
 		L"user32.dll",
@@ -3699,7 +3698,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __OUT, __OUT, __OUT, __IN, __OUT, __OUT, __OUT, __OUT, __OUT },
 		{ __REQ, __REQ, __REQ, __OPT, __REQ, __OPT, __OPT, __OPT, __OPT, __OPT },
-		{ __PUNIVERSAL_FONT_ID, __PULONG, __LPWSTR, __PULONG, __FLONG, __BOOL, __PULONG, __PVOID, __PBOOL, __PULONG },
+		{ __PUNIVERSAL_FONT_ID, __PULONG, __LPWSTR, __PULONG, __ULONG, __BOOL, __PULONG, __PVOID, __PBOOL, __PULONG },
 	},
 	{
 		L"user32.dll",
@@ -3783,7 +3782,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __OUT, __OUT, __OUT, __OUT, __OUT, __OUT },
 		{ __REQ, __REQ, __OPT, __REQ, __REQ, __REQ, __REQ },
-		{ __HDC, __PUNIVERSAL_FONT_ID, __DESIGNVECTOR, __PULONG, __PULONG, __FLONG, __KERNEL_PVOID },
+		{ __HDC, __PUNIVERSAL_FONT_ID, __DESIGNVECTOR, __PULONG, __PULONG, __ULONG, __KERNEL_PVOID },
 	},
 	{
 		L"user32.dll",
@@ -3879,7 +3878,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __UNKNOWN, __IN, __OUT, __OUT, __OUT },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __OPT, __REQ },
-		{ __HDC, __ULONG, __WCHAR, __ULONG, __USHORT, __WIDTHDATA, __FLONG },
+		{ __HDC, __ULONG, __WCHAR, __ULONG, __USHORT, __WIDTHDATA, __ULONG },
 	},
 	{
 		L"user32.dll",
@@ -5103,7 +5102,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __IN, __UNKNOWN, __UNKNOWN, __IN, __IN, __IN, __IN, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __HDC, __INT, __INT, __DWORD, __LPBYTE, __LPBITMAPINFO, __DWORD, __UINT, __UINT, __FLONG, __HANDLE },
+		{ __HDC, __INT, __INT, __DWORD, __LPBYTE, __LPBITMAPINFO, __DWORD, __UINT, __UINT, __ULONG, __HANDLE },
 	},
 	{
 		L"user32.dll",
@@ -5115,7 +5114,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __UNKNOWN, __IN, __IN, __IN, __IN, __UNKNOWN },
 		{ __OPT, __OPT, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __HDC, __HANDLE, __DWORD, __LPBITMAPINFO, __DWORD, __UINT, __FLONG, __ULONG_PTR, __PVOID },
+		{ __HDC, __HANDLE, __DWORD, __LPBITMAPINFO, __DWORD, __UINT, __ULONG, __ULONG_PTR, __PVOID },
 	},
 	{
 		L"user32.dll",
@@ -5139,7 +5138,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __UNKNOWN, __IN, __IN, __IN, __IN, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __PVOID, __FLONG, __UINT, __BOOL, __BOOL, __PVOID },
+		{ __PVOID, __ULONG, __UINT, __BOOL, __BOOL, __PVOID },
 	},
 	{
 		L"user32.dll",
@@ -5235,7 +5234,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __UNKNOWN, __IN, __UNKNOWN, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __FLONG, __PBYTE, __UNSIGNED, __LPWSTR, __UNSIGNED },
+		{ __ULONG, __PBYTE, __UNSIGNED, __LPWSTR, __UNSIGNED },
 	},
 	{
 		L"user32.dll",
@@ -5427,7 +5426,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __UNKNOWN, __IN, __IN, __OUT, __OUT, __OUT, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __OPT, __REQ, __REQ, __REQ },
-		{ __HDC, __LPWSTR, __ULONG, __ULONG, __PULONG, __PULONG, __LPSIZE, __FLONG },
+		{ __HDC, __LPWSTR, __ULONG, __ULONG, __PULONG, __PULONG, __LPSIZE, __ULONG },
 	},
 	{
 		L"user32.dll",
@@ -5439,7 +5438,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __UNKNOWN, __IN, __UNKNOWN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __HDC, __UINT, __ULONG, __PWCHAR, __FLONG, __UNKNOWN },
+		{ __HDC, __UINT, __ULONG, __PWCHAR, __ULONG, __UNKNOWN },
 	},
 	{
 		L"user32.dll",
@@ -5835,7 +5834,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __UNKNOWN, __IN, __UNKNOWN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __HDC, __UINT, __UINT, __PWCHAR, __FLONG, __UNKNOWN },
+		{ __HDC, __UINT, __UINT, __PWCHAR, __ULONG, __UNKNOWN },
 	},
 	{
 		L"user32.dll",
@@ -6339,7 +6338,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __IN, __IN, __IN, __IN, __IN, __IN, __IN, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __OPT, __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __HDC, __INT, __INT, __INT, __INT, __HDC, __INT, __INT, __DWORD, __DWORD, __FLONG },
+		{ __HDC, __INT, __INT, __INT, __INT, __HDC, __INT, __INT, __DWORD, __DWORD, __ULONG },
 	},
 	{
 		L"user32.dll",
@@ -6867,7 +6866,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __IN, __IN, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __OPT },
-		{ __PWCHAR, __ULONG, __ULONG, __FLONG, __DWORD, __PDESIGNVECTOR },
+		{ __PWCHAR, __ULONG, __ULONG, __ULONG, __DWORD, __PDESIGNVECTOR },
 	},
 	{
 		L"user32.dll",
@@ -6879,7 +6878,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __IN, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __LPEXTLOGFONTW, __ULONG, __LFTYPE, __FLONG, __PVOID },
+		{ __LPEXTLOGFONTW, __ULONG, __LFTYPE, __ULONG, __PVOID },
 	},
 	{
 		L"user32.dll",
@@ -6903,7 +6902,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __IN, __UNKNOWN, __IN, __INOUT, __OUT },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __HDC, __ULONG, __FLONG, __ULONG, __LPCWSTR, __ULONG, __PULONG, __PVOID },
+		{ __HDC, __ULONG, __ULONG, __ULONG, __LPCWSTR, __ULONG, __PULONG, __PVOID },
 	},
 	{
 		L"user32.dll",
@@ -7047,7 +7046,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN },
 		{ __REQ, __REQ, __REQ },
-		{ __HSURF, __HDEV, __FLONG },
+		{ __HSURF, __HDEV, __ULONG },
 	},
 	{
 		L"user32.dll",
@@ -7071,7 +7070,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __IN, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __OPT },
-		{ __SIZEL, __LONG, __ULONG, __FLONG, __PVOID },
+		{ __SIZEL, __LONG, __ULONG, __ULONG, __PVOID },
 	},
 	{
 		L"user32.dll",
@@ -7203,7 +7202,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __IN, __IN, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __ULONG, __ULONG, __PULONG, __FLONG, __FLONG, __FLONG },
+		{ __ULONG, __ULONG, __PULONG, __ULONG, __ULONG, __ULONG },
 	},
 	{
 		L"user32.dll",
@@ -7239,7 +7238,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __IN, __IN, __IN, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __PSURFOBJ, __PATHOBJ, __PCLIPOBJ, __PBRUSHOBJ, __PPOINTL, __MIX, __FLONG },
+		{ __PSURFOBJ, __PATHOBJ, __PCLIPOBJ, __PBRUSHOBJ, __PPOINTL, __MIX, __ULONG },
 	},
 	{
 		L"user32.dll",
@@ -7251,7 +7250,7 @@ struct syscall_t syscall_list[4096] = {
 		NULL,
 		{ __IN, __IN, __IN, __IN, __IN, __IN, __IN, __IN, __IN, __IN },
 		{ __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ, __REQ },
-		{ __PSURFOBJ, __PATHOBJ, __PCLIPOBJ, __XFORMOBJ, __PBRUSHOBJ, __LINEATTRS, __PBRUSHOBJ, __PPOINTL, __MIX, __FLONG },
+		{ __PSURFOBJ, __PATHOBJ, __PCLIPOBJ, __XFORMOBJ, __PBRUSHOBJ, __LINEATTRS, __PBRUSHOBJ, __PPOINTL, __MIX, __ULONG },
 	},
 	{
 		L"user32.dll",
