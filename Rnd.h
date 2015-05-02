@@ -28,7 +28,7 @@ inline UINT32 fastrand32(){
 }
 
 inline UINT64 fastrand64(){
-	return ((fastrand32() << 16) << 16 | fastrand32());
+	return ((UINT64)(((UINT64)fastrand32() << 31)<<1) | fastrand32());
 }
 
 inline void fastrandbuffer(UINT8* buffer, int size){
